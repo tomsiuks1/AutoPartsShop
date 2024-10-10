@@ -22,7 +22,7 @@ namespace API.Extentions
             });
 
             services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(GetCarMakers.Handler).Assembly));
-            services.AddScoped<PaymentService>();
+            // services.AddScoped<PaymentService>();
 
             return services;
         }
