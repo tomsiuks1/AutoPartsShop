@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241017193123_Initial2")]
+    partial class Initial2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,10 +211,14 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Brand")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -235,6 +242,8 @@ namespace Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("CatalogItems");
                 });
@@ -556,9 +565,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Models.Catalog.Category", "Category")
                         .WithMany("CatalogItems")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
                 });

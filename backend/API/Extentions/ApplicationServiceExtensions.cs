@@ -13,7 +13,7 @@ namespace API.Extentions
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://127.0.0.1:3000");
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
                 });
             });
             services.AddDbContext<DataContext>(options =>
@@ -22,7 +22,7 @@ namespace API.Extentions
             });
 
             services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(GetCarMakers.Handler).Assembly));
-            // services.AddScoped<PaymentService>();
+            services.AddScoped<PaymentService>();
 
             return services;
         }

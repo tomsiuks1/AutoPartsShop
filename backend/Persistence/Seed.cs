@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.Catalog;
 using Persistence.CatalogItems;
@@ -55,191 +56,57 @@ namespace Persistence
                 await context.Models.AddRangeAsync(carModels);
             }
 
-            if (!context.CatalogItems.Any())
+            if (!context.Categories.Any())
             {
-                var catalogItems = new List<CatalogItem>
+                var categories = new List<Category>
                 {
-                        new CatalogItem
-                        {
-                            Name = "BMW 320 engine",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 20000,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/478/2387857.png",
-                            Brand = "BMW",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW 328 engine",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 21000,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/478/2387857.png",
-                            Brand = "BMW",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW 330 engine",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 25000,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/478/2387857.png",
-                            Brand = "BMW",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW 335 engine",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 30000,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/478/2387857.png",
-                            Brand = "BMW",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Audi A4",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 25000,
-                            PictureUrl = "https://s19531.pcdn.co/wp-content/uploads/2021/09/2012_Golf_GTI-Large-3315-copy.jpg",
-                            Brand = "Audi",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Audi A6",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 25000,
-                            PictureUrl = "https://s19531.pcdn.co/wp-content/uploads/2021/09/2012_Golf_GTI-Large-3315-copy.jpg",
-                            Brand = "Audi",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Audi A8",
-                            Description =
-                                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 25000,
-                            PictureUrl = "https://s19531.pcdn.co/wp-content/uploads/2021/09/2012_Golf_GTI-Large-3315-copy.jpg",
-                            Brand = "Audi",
-                            Type = "Engine",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Porche 911 Engine Part",
-                            Description =
-                                "Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 100,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/479/2392872.png",
-                            Brand = "Porche",
-                            Type = "Engine Part",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Porche 911 Engine Part 2",
-                            Description =
-                                "Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 300,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/479/2392872.png",
-                            Brand = "Porche",
-                            Type = "Engine Part",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Porche 911 Engine Part 3",
-                            Description =
-                                "Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 100,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/479/2392872.png",
-                            Brand = "Porche",
-                            Type = "Engine Part",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW 530d Timing Belt",
-                            Description =
-                                "Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 1500,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/480/2398857.png",
-                            Brand = "Continental",
-                            Type = "Timing Belt",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW 420d Timing Belt",
-                            Description =
-                                "Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 1500,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/480/2398857.png",
-                            Brand = "Continental",
-                            Type = "Timing Belt",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "Porche Cayman Timing Belt",
-                            Description =
-                                "Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.",
-                            Price = 1500,
-                            PictureUrl = "https://www.bmwautodalys.lt/diagrams/s3000002/480/2398857.png",
-                            Brand = "Continental",
-                            Type = "Timing Belt",
-                            QuantityInStock = 100
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW M4",
-                            Description =
-                                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.",
-                            Price = 19999,
-                            PictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwT6rZOIerhgI1MwefF0rpmX7nLRbKJ65OSnSaTvJ-hw&s",
-                            Brand = "BMW",
-                            Type = "Timing Chain",
-                            QuantityInStock = 1000
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW M3",
-                            Description =
-                                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.",
-                            Price = 1999,
-                            PictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwT6rZOIerhgI1MwefF0rpmX7nLRbKJ65OSnSaTvJ-hw&s",
-                            Brand = "BMW",
-                            Type = "Timing Chain",
-                            QuantityInStock = 1000
-                        },
-                        new CatalogItem
-                        {
-                            Name = "BMW 435i",
-                            Description =
-                                "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.",
-                            Price = 20999,
-                            PictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwT6rZOIerhgI1MwefF0rpmX7nLRbKJ65OSnSaTvJ-hw&s",
-                            Brand = "BMW",
-                            Type = "Timing Chain",
-                            QuantityInStock = 1000
-                        },
+                    new Category { Name = "Engines" },
+                    new Category { Name = "Electronics" },
+                    new Category { Name = "Timing Belts" },
+                    new Category { Name = "Engine Parts" }
                 };
-
-                await context.CatalogItems.AddRangeAsync(catalogItems);
+                
+                await context.Categories.AddRangeAsync(categories);
+                await context.SaveChangesAsync();
             }
 
+        if (!context.CatalogItems.Any())
+        {
+            var catalogItems = new List<CatalogItem>
+            {
+                new CatalogItem
+                {
+                    Name = "BMW 320 engine",
+                    Description = "Lorem ipsum dolor sit amet...",
+                    Price = 20000,
+                    PictureUrl = "https://example.com/bmw320.png",
+                    Brand = "BMW",
+                    Type = "Engine",
+                    QuantityInStock = 100,
+                    Category = await context.Categories.FirstOrDefaultAsync(c => c.Name == "Engines") 
+                },
+            };
+
+            await context.CatalogItems.AddRangeAsync(catalogItems);
+            await context.SaveChangesAsync();
+        }
+
+        if (!context.Comments.Any())
+        {
+            var catalogItem = await context.CatalogItems.FirstOrDefaultAsync(ci => ci.Name == "BMW 320 engine");
+
+            if (catalogItem != null)
+            {
+                var comments = new List<Comment>
+                {
+                    new Comment { Content = "Great engine!", DisplayName = "User1", CatalogItemId = catalogItem.Id },
+                    new Comment { Content = "Very efficient!", DisplayName = "User2", CatalogItemId = catalogItem.Id }
+                };
+
+                await context.Comments.AddRangeAsync(comments);
+                await context.SaveChangesAsync();
+            }
+        }
             await context.SaveChangesAsync();
         }
     }

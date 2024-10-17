@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241017190253_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,6 +211,7 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Brand")
@@ -237,6 +241,21 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CatalogItems");
+                });
+
+            modelBuilder.Entity("Models.Catalog.CatalogItemCategory", b =>
+                {
+                    b.Property<Guid>("CatalogItemId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CatalogItemId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("CatalogItemCategories");
                 });
 
             modelBuilder.Entity("Models.Catalog.Category", b =>
@@ -552,13 +571,21 @@ namespace Persistence.Migrations
                     b.Navigation("CatalogItem");
                 });
 
-            modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
+            modelBuilder.Entity("Models.Catalog.CatalogItemCategory", b =>
                 {
-                    b.HasOne("Models.Catalog.Category", "Category")
-                        .WithMany("CatalogItems")
-                        .HasForeignKey("Id")
+                    b.HasOne("Models.Catalog.CatalogItem", "CatalogItem")
+                        .WithMany("Categories")
+                        .HasForeignKey("CatalogItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Models.Catalog.Category", "Category")
+                        .WithMany("CatalogItems")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CatalogItem");
 
                     b.Navigation("Category");
                 });
@@ -660,6 +687,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Comments");
                 });
 

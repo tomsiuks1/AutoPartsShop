@@ -26,14 +26,14 @@ namespace API.Controllers
             return basket.MapBasketToDto();
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> RemoveBasketItem(Guid catalogItemId, int quantity = 1)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> RemoveBasketItem(Guid id, int quantity = 1)
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
             if (basket == null) return NotFound();
 
-            basket.RemoveItem(catalogItemId, quantity);
+            basket.RemoveItem(id, quantity);
 
             var result = await _dataContext.SaveChangesAsync() > 0;
 
@@ -41,6 +41,26 @@ namespace API.Controllers
 
             return BadRequest(new ProblemDetails { Title = "Problem removing item from the basket" });
         }
+
+        // [HttpPut("{id}")]
+        // public async Task<ActionResult> UpdateBasket(Guid id, int quantity = 1)
+        // {
+        //     var basket = await RetrieveBasket(GetBuyerId());
+
+        //     if (basket == null) basket = CreateBasket();
+
+        //     var product = await _dataContext.CatalogItems.FindAsync(id);
+
+        //     if (product == null) return BadRequest(new ProblemDetails { Title = "Product not found" });
+
+        //     basket.AddItem(product, quantity);
+
+        //     var result = await _dataContext.SaveChangesAsync() > 0;
+
+        //     if (result) return CreatedAtRoute("GetBasket", basket.MapBasketToDto());
+
+        //     return BadRequest(new ProblemDetails { Title = "Problem saving item to basket" });
+        // }
 
 
         [HttpPost]

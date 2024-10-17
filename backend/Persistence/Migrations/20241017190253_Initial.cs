@@ -89,6 +89,18 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Makers",
                 columns: table => new
                 {
@@ -295,6 +307,52 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CatalogItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_CatalogItems_CatalogItemId",
+                        column: x => x.CatalogItemId,
+                        principalTable: "CatalogItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CatalogItemCategories",
+                columns: table => new
+                {
+                    CatalogItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CatalogItemCategories", x => new { x.CatalogItemId, x.CategoryId });
+                    table.ForeignKey(
+                        name: "FK_CatalogItemCategories_CatalogItems_CatalogItemId",
+                        column: x => x.CatalogItemId,
+                        principalTable: "CatalogItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CatalogItemCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderItem",
                 columns: table => new
                 {
@@ -322,7 +380,8 @@ namespace Persistence.Migrations
                 values: new object[,]
                 {
                     { 1, null, "Member", "MEMBER" },
-                    { 2, null, "Admin", "ADMIN" }
+                    { 2, null, "Admin", "ADMIN" },
+                    { 3, null, "User", "User" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -375,6 +434,16 @@ namespace Persistence.Migrations
                 column: "CatalogItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CatalogItemCategories_CategoryId",
+                table: "CatalogItemCategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_CatalogItemId",
+                table: "Comments",
+                column: "CatalogItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItem_OrderId",
                 table: "OrderItem",
                 column: "OrderId");
@@ -402,6 +471,12 @@ namespace Persistence.Migrations
                 name: "BasketItem");
 
             migrationBuilder.DropTable(
+                name: "CatalogItemCategories");
+
+            migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
                 name: "Makers");
 
             migrationBuilder.DropTable(
@@ -418,6 +493,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Baskets");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "CatalogItems");
