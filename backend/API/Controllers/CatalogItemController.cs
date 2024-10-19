@@ -5,7 +5,7 @@ using Persistence;
 
 namespace API.Controllers
 {
-    public class CatalogItemController   : BaseApiController
+    public class CatalogItemController : BaseApiController
     {
         private readonly DataContext _context;
 

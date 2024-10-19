@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,8 @@ using Persistence;
 
 namespace API.Controllers
 {
-    public class CommentController  : BaseApiController
+    [AllowAnonymous]
+    public class CommentController : BaseApiController
     {
         private readonly DataContext _context;
         private readonly UserManager<User> _userManager;
@@ -41,11 +43,10 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(Comment comment)
         {
-            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+            // var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
             comment.CreatedAt = DateTime.Now;
-            comment.Id = Guid.NewGuid();
-            comment.UserId = user.Id;
-            comment.DisplayName = user.Email;
+            // comment.UserId = user.Id;
+            // comment.DisplayName = user.Email;
 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();

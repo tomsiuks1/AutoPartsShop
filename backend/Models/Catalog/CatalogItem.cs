@@ -12,6 +12,7 @@ namespace Models.Catalog
         public string Brand { get; set; }
         public int QuantityInStock { get; set; }
         public string PublicId { get; set; }
+        public Guid CategoryId { get; set; }
         public Category Category { get; set; }
         public List<Comment> Comments { get; set; } = new List<Comment>();
     }

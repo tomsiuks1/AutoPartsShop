@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    public class Role : IdentityRole<int>
+    public class Role : IdentityRole<Guid>
     {
     }
 }

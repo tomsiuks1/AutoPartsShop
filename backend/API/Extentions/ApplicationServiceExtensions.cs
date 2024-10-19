@@ -1,5 +1,5 @@
 ﻿using API.Service;
-using Application.Catalog.Cars.Makers;
+using Application.Orders;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -21,7 +21,7 @@ namespace API.Extentions
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(GetCarMakers.Handler).Assembly));
+            services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(GetOrder.Handler).Assembly));
             services.AddScoped<PaymentService>();
 
             return services;
