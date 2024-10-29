@@ -43,10 +43,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(Comment comment)
         {
-            // var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
             comment.CreatedAt = DateTime.Now;
-            // comment.UserId = user.Id;
-            // comment.DisplayName = user.Email;
 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();

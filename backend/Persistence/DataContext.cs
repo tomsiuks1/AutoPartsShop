@@ -21,15 +21,15 @@ namespace Persistence
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Category>()
-                .HasMany(c => c.CatalogItems)
-                .WithOne(ci => ci.Category)
-                .HasForeignKey(ci => ci.CategoryId);
-
             builder.Entity<CatalogItem>()
-                .HasMany(ci => ci.Comments)
-                .WithOne(c => c.CatalogItem)
-                .HasForeignKey(c => c.CatalogItemId);
+            .HasOne(ci => ci.Category)
+            .WithMany(c => c.CatalogItems)
+            .HasForeignKey(ci => ci.CategoryId);
+
+            builder.Entity<Comment>()
+            .HasOne(c => c.CatalogItem)
+            .WithMany(ci => ci.Comments)
+            .HasForeignKey(c => c.CatalogItemId);
 
             builder.Entity<User>()
                 .HasOne(a => a.Address)

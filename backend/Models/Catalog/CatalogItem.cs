@@ -1,4 +1,6 @@
 ﻿
+using System.Text.Json.Serialization;
+
 namespace Models.Catalog
 {
     public class CatalogItem
@@ -13,7 +15,8 @@ namespace Models.Catalog
         public int QuantityInStock { get; set; }
         public string PublicId { get; set; }
         public Guid CategoryId { get; set; }
+        [JsonIgnore]
         public Category Category { get; set; }
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<Comment> Comments { get; set; }
     }
 }

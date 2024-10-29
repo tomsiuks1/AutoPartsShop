@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.Catalog;
+using Models.DTOs;
 using Persistence;
 
 namespace API.Controllers
@@ -36,15 +37,20 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CatalogItem>> CreateCatalogItem(CatalogItem catalogItem, Guid categoryId)
+        public async Task<ActionResult<CatalogItem>> CreateCatalogItem(CatalogItemCreateDto catalogItemDto)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == categoryId);
-
-            if (category == null) {
+            var category = await _context.Categories.FindAsync(catalogItemDto.CategoryId);
+            if (category == null)
+            {
                 return BadRequest("Category not found!");
             }
 
-            catalogItem.Category = category;
+            var catalogItem = new CatalogItem
+            {
+                Name = catalogItemDto.Name,
+                CategoryId = catalogItemDto.CategoryId
+            };
+
             _context.CatalogItems.Add(catalogItem);
             await _context.SaveChangesAsync();
 
@@ -52,14 +58,16 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCatalogItem(Guid id, CatalogItem catalogItem)
+        public async Task<IActionResult> UpdateCatalogItem(Guid id, CatalogItemUpdateDto catalogItemDto)
         {
-            if (id != catalogItem.Id)
+            var catalogItem = await _context.CatalogItems.FindAsync(id);
+            if (catalogItem == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(catalogItem).State = EntityState.Modified;
+            catalogItem.Name = catalogItemDto.Name;
+            catalogItem.CategoryId = catalogItemDto.CategoryId;
 
             try
             {
@@ -77,9 +85,9 @@ namespace API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(catalogItem);
         }
-
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCatalogItem(Guid id)
         {

@@ -4,6 +4,6 @@ namespace Models.Catalog
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public List<CatalogItem> CatalogItems { get; set; } = new List<CatalogItem>();
+        public ICollection<CatalogItem> CatalogItems { get; set; }
     }
 }
