@@ -11,7 +11,7 @@ namespace Persistence
     {
         public DataContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<CatalogItem> CatalogItems { get; set; }
+        public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -21,15 +21,15 @@ namespace Persistence
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<CatalogItem>()
+            builder.Entity<Product>()
             .HasOne(ci => ci.Category)
-            .WithMany(c => c.CatalogItems)
+            .WithMany(c => c.Products)
             .HasForeignKey(ci => ci.CategoryId);
 
             builder.Entity<Comment>()
-            .HasOne(c => c.CatalogItem)
+            .HasOne(c => c.Product)
             .WithMany(ci => ci.Comments)
-            .HasForeignKey(c => c.CatalogItemId);
+            .HasForeignKey(c => c.ProductId);
 
             builder.Entity<User>()
                 .HasOne(a => a.Address)

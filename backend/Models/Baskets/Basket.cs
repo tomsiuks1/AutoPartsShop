@@ -10,21 +10,21 @@ namespace Models.Baskets
         public string PaymentIntentId { get; set; }
         public string ClientSecret { get; set; }
 
-        public void AddItem(CatalogItem catalogItem, int quantity)
+        public void AddItem(Product product, int quantity)
         {
-            if (Items.All(item => item.CatalogItemId != catalogItem.Id))
+            if (Items.All(item => item.ProductId != product.Id))
             {
-                Items.Add(new BasketItem { CatalogItem = catalogItem, Quantity = quantity });
+                Items.Add(new BasketItem { Product = product, Quantity = quantity });
                 return;
             }
 
-            var existingItem = Items.FirstOrDefault(item => item.CatalogItemId == catalogItem.Id);
+            var existingItem = Items.FirstOrDefault(item => item.ProductId == product.Id);
             if (existingItem != null) existingItem.Quantity += quantity;
         }
 
-        public void RemoveItem(Guid catalogItemId, int quantity = 1)
+        public void RemoveItem(Guid productId, int quantity = 1)
         {
-            var item = Items.FirstOrDefault(basketItem => basketItem.CatalogItemId == catalogItemId);
+            var item = Items.FirstOrDefault(basketItem => basketItem.ProductId == productId);
             if (item == null) return;
             item.Quantity -= quantity;
             if (item.Quantity == 0) Items.Remove(item);

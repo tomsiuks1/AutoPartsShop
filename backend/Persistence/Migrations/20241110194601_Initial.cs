@@ -234,7 +234,7 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CatalogItems",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -246,13 +246,14 @@ namespace Persistence.Migrations
                     Brand = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuantityInStock = table.Column<int>(type: "int", nullable: false),
                     PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CatalogItems", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CatalogItems_Categories_CategoryId",
+                        name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
@@ -288,7 +289,7 @@ namespace Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CatalogItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BasketId = table.Column<int>(type: "int", nullable: false),
                     BasketId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
@@ -301,9 +302,9 @@ namespace Persistence.Migrations
                         principalTable: "Baskets",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_BasketItem_CatalogItems_CatalogItemId",
-                        column: x => x.CatalogItemId,
-                        principalTable: "CatalogItems",
+                        name: "FK_BasketItem_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -316,16 +317,16 @@ namespace Persistence.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CatalogItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_CatalogItems_CatalogItemId",
-                        column: x => x.CatalogItemId,
-                        principalTable: "CatalogItems",
+                        name: "FK_Comments_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -335,9 +336,9 @@ namespace Persistence.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("2a3374a4-ec51-441c-88cd-a999939643e5"), null, "User", "User" },
-                    { new Guid("d32eb7da-c68e-4f81-a450-1420cd99563d"), null, "Member", "MEMBER" },
-                    { new Guid("e345b91f-0df8-4215-adb5-75369f39a0c4"), null, "Admin", "ADMIN" }
+                    { new Guid("6a2f97bf-75f3-4428-b99b-2cfaf1084f65"), null, "User", "User" },
+                    { new Guid("e28e4ea6-fdd4-41f4-a81e-d57e475b134e"), null, "Member", "MEMBER" },
+                    { new Guid("f1abfea4-a71f-49ce-8a37-e1fe799a9897"), null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -385,24 +386,24 @@ namespace Persistence.Migrations
                 column: "BasketId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BasketItem_CatalogItemId",
+                name: "IX_BasketItem_ProductId",
                 table: "BasketItem",
-                column: "CatalogItemId");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CatalogItems_CategoryId",
-                table: "CatalogItems",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_CatalogItemId",
+                name: "IX_Comments_ProductId",
                 table: "Comments",
-                column: "CatalogItemId");
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItem_OrderId",
                 table: "OrderItem",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
         }
 
         /// <inheritdoc />
@@ -442,7 +443,7 @@ namespace Persistence.Migrations
                 name: "Baskets");
 
             migrationBuilder.DropTable(
-                name: "CatalogItems");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Orders");

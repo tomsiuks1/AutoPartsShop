@@ -9,12 +9,12 @@ namespace Application.Baskets
     {
         public class Command : IRequest<Basket>
         {
-            public Guid CatalogItemId { get; set; }
+            public Guid ProductId { get; set; }
             public int Quantity { get; set; }
 
-            public Command(Guid catalogItemId, int quantity)
+            public Command(Guid productId, int quantity)
             {
-                CatalogItemId = catalogItemId;
+                ProductId = productId;
                 Quantity = quantity;
             }
         }
@@ -31,7 +31,7 @@ namespace Application.Baskets
 
             public async Task<Basket> Handle(Command request, CancellationToken cancellationToken)
             {
-                /*                var basket = await _basketService.RetrieveBasket(_basketService.GetBuyerId());*/
+                //  var basket = await _basketService.RetrieveBasket(_basketService.GetBuyerId());
                 Basket basket = null;
 
                 if (basket == null)
@@ -39,7 +39,7 @@ namespace Application.Baskets
                     basket = _basketService.CreateBasket();
                 }
 
-                var product = await _context.CatalogItems.FindAsync(request.CatalogItemId);
+                var product = await _context.Products.FindAsync(request.ProductId);
 
                 if (product == null)
                 {

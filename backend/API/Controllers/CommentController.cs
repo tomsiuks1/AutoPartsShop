@@ -1,36 +1,44 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Models;
 using Models.Catalog;
+using Models.DTOs;
 using Persistence;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
-    public class CommentController : BaseApiController
+    [Route("api/product/{productId}/comments")]
+    [ApiController]
+    public class CommentController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly UserManager<User> _userManager;
 
-        public CommentController(DataContext context, UserManager<User> userManager)
+        public CommentController(DataContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
+        public async Task<ActionResult<IEnumerable<GetComentsByCatalogItemIdDto>>> GetComments(Guid productId)
         {
-            return await _context.Comments.ToListAsync();
+            var comments = await _context.Comments
+                .Where(c => c.ProductId == productId)
+                .Select(c => new GetComentsByCatalogItemIdDto
+                {
+                    Id = c.Id,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt,
+                    DisplayName = _context.Users.FirstOrDefault(u => u.Id == c.UserId).DisplayName
+                })
+                .ToListAsync();
+
+            return comments;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(Guid id)
+        public async Task<ActionResult<Comment>> GetComment(Guid productId, Guid id)
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments
+                .FirstOrDefaultAsync(c => c.Id == id && c.ProductId == productId);
 
             if (comment == null)
             {
@@ -41,19 +49,25 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Comment>> CreateComment(Comment comment)
+        public async Task<ActionResult<Comment>> CreateComment(Guid productId, CreateCommentDto comment)
         {
-            comment.CreatedAt = DateTime.Now;
+            var newComment = new Comment
+            {
+                ProductId = productId,
+                Content = comment.Content,
+                UserId = comment.UserId,
+            };
 
-            _context.Comments.Add(comment);
+            _context.Comments.Add(newComment);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
+
+            return CreatedAtAction(nameof(GetComment), new { productId, id = newComment.Id }, comment);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(Guid id, Comment comment)
+        public async Task<IActionResult> UpdateComment(Guid productId, Guid id, UpdateCommentDto comment)
         {
-            if (id != comment.Id)
+            if (id != comment.Id || productId != comment.ProductId)
             {
                 return BadRequest();
             }
@@ -66,7 +80,7 @@ namespace API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Comments.Any(e => e.Id == id))
+                if (!_context.Comments.Any(e => e.Id == id && e.ProductId == productId))
                 {
                     return NotFound();
                 }
@@ -82,7 +96,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(Guid id)
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
+
             if (comment == null)
             {
                 return NotFound();

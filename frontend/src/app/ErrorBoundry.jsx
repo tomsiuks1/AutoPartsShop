@@ -21,7 +21,7 @@ class ErrorBoundary extends Component {
   handlePromiseRejection(event) {
     const error = event.reason;
     this.setState({ hasError: true, errorMessage: error.toString() });
-    // toast.error(error.toString());
+    toast.error(error.toString());
   }
 
   render() {

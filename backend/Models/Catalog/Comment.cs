@@ -9,8 +9,8 @@ namespace Models.Catalog
         public DateTime CreatedAt { get; set; }
         public Guid UserId { get; set; }
         public string DisplayName { get; set; }
-        public Guid CatalogItemId { get; set; }
+        public Guid ProductId { get; set; }
         [JsonIgnore]
-        public CatalogItem CatalogItem { get; set; }
+        public Product Product { get; set; }
     }
 }

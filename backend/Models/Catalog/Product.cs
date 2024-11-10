@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Models.Catalog
 {
-    public class CatalogItem
+    public class Product
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -14,6 +14,7 @@ namespace Models.Catalog
         public string Brand { get; set; }
         public int QuantityInStock { get; set; }
         public string PublicId { get; set; }
+        public DateTime CreatedAt { get; set; }
         public Guid CategoryId { get; set; }
         [JsonIgnore]
         public Category Category { get; set; }

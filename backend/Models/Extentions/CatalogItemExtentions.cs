@@ -4,7 +4,7 @@ namespace Models.Extentions
 {
     public static class CatalogItemExtentions
     {
-        public static IQueryable<CatalogItem> Sort(this IQueryable<CatalogItem> query, string orderBy)
+        public static IQueryable<Product> Sort(this IQueryable<Product> query, string orderBy)
         {
             if (string.IsNullOrWhiteSpace(orderBy)) return query.OrderBy(p => p.Name);
 
@@ -18,7 +18,7 @@ namespace Models.Extentions
             return query;
         }
 
-        public static IQueryable<CatalogItem> Search(this IQueryable<CatalogItem> query, string searchTerm)
+        public static IQueryable<Product> Search(this IQueryable<Product> query, string searchTerm)
         {
             if (string.IsNullOrEmpty(searchTerm)) return query;
 
@@ -27,7 +27,7 @@ namespace Models.Extentions
             return query.Where(p => p.Name.ToLower().Contains(lowerCaseSearchTerm));
         }
 
-        public static IQueryable<CatalogItem> Filter(this IQueryable<CatalogItem> query, string brands, string types)
+        public static IQueryable<Product> Filter(this IQueryable<Product> query, string brands, string types)
         {
             var brandList = new List<string>();
             List<string> typeList = new();

@@ -17,14 +17,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            return await _context.Categories.Include(c => c.CatalogItems).ToListAsync();
+            return await _context.Categories.Include(c => c.Products).ThenInclude(ci => ci.Comments).ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(Guid id)
         {
             var category = await _context.Categories
-                .Include(c => c.CatalogItems)
+                .Include(c => c.Products)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (category == null)
@@ -33,6 +33,16 @@ namespace API.Controllers
             }
 
             return category;
+        }
+
+        [HttpGet("{categoryId}/products")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetCatalogItemsByCategory(Guid categoryId)
+        {
+            var catalogItems = await _context.Products
+                .Where(ci => ci.CategoryId == categoryId)
+                .ToListAsync();
+
+            return catalogItems;
         }
 
         [HttpPost]
@@ -86,28 +96,5 @@ namespace API.Controllers
 
             return NoContent();
         }
-
-        // [HttpPost("{categoryId}/CatalogItem/{catalogItemId}")]
-        // public async Task<IActionResult> AddCatalogItemToCategory(Guid categoryId, Guid catalogItemId)
-        // {
-        //     var category = await _context.Categories.FindAsync(categoryId);
-        //     var catalogItem = await _context.CatalogItems.FindAsync(catalogItemId);
-
-        //     if (category == null || catalogItem == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     var catalogItemCategory = new CatalogItemCategory
-        //     {
-        //         CategoryId = categoryId,
-        //         CatalogItemId = catalogItemId
-        //     };
-
-        //     _context.CatalogItemCategories.Add(catalogItemCategory);
-        //     await _context.SaveChangesAsync();
-
-        //     return NoContent();
-        // }
     }
 }

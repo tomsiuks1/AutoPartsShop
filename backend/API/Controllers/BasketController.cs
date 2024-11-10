@@ -26,14 +26,14 @@ namespace API.Controllers
             return basket.MapBasketToDto();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> RemoveBasketItem(Guid id, int quantity = 1)
+        [HttpDelete("{productId}")]
+        public async Task<ActionResult> RemoveBasketItem(Guid productId, int quantity = 1)
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
             if (basket == null) return NotFound();
 
-            basket.RemoveItem(id, quantity);
+            basket.RemoveItem(productId, quantity);
 
             var result = await _dataContext.SaveChangesAsync() > 0;
 
@@ -42,35 +42,35 @@ namespace API.Controllers
             return BadRequest(new ProblemDetails { Title = "Problem removing item from the basket" });
         }
 
-        // [HttpPut("{id}")]
-        // public async Task<ActionResult> UpdateBasket(Guid id, int quantity = 1)
-        // {
-        //     var basket = await RetrieveBasket(GetBuyerId());
-
-        //     if (basket == null) basket = CreateBasket();
-
-        //     var product = await _dataContext.CatalogItems.FindAsync(id);
-
-        //     if (product == null) return BadRequest(new ProblemDetails { Title = "Product not found" });
-
-        //     basket.AddItem(product, quantity);
-
-        //     var result = await _dataContext.SaveChangesAsync() > 0;
-
-        //     if (result) return CreatedAtRoute("GetBasket", basket.MapBasketToDto());
-
-        //     return BadRequest(new ProblemDetails { Title = "Problem saving item to basket" });
-        // }
-
-
-        [HttpPost]
-        public async Task<ActionResult> AddItemToBasket(Guid catalogItemId, int quantity = 1)
+        [HttpPut("{productId}")]
+        public async Task<ActionResult> UpdateBasket(Guid productId, int quantity = 1)
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
             if (basket == null) basket = CreateBasket();
 
-            var product = await _dataContext.CatalogItems.FindAsync(catalogItemId);
+            var product = await _dataContext.Products.FindAsync(productId);
+
+            if (product == null) return BadRequest(new ProblemDetails { Title = "Product not found" });
+
+            basket.AddItem(product, quantity);
+
+            var result = await _dataContext.SaveChangesAsync() > 0;
+
+            if (result) return CreatedAtRoute("GetBasket", basket.MapBasketToDto());
+
+            return BadRequest(new ProblemDetails { Title = "Problem saving item to basket" });
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddItemToBasket(Guid productId, int quantity = 1)
+        {
+            var basket = await RetrieveBasket(GetBuyerId());
+
+            if (basket == null) basket = CreateBasket();
+
+            var product = await _dataContext.Products.FindAsync(productId);
 
             if (product == null) return BadRequest(new ProblemDetails { Title = "Product not found" });
 
@@ -93,7 +93,7 @@ namespace API.Controllers
 
             return await _dataContext.Baskets
                 .Include(i => i.Items)
-                .ThenInclude(p => p.CatalogItem)
+                .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(basket => basket.BuyerId == buyerId);
         }
 

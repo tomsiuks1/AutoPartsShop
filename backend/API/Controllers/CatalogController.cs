@@ -9,19 +9,19 @@ using Persistence;
 using AutoMapper;
 using Models.DTOs;
 
-namespace API.Controllers
+namespace API.Controllers.old
 {
-    public class CatalogController : BaseApiController
+    public class CatalogOldController : BaseApiController
     {
-        // private readonly IMediator _mediator;
-        // private readonly DataContext _dataContext;
-        // private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
+        private readonly DataContext _dataContext;
+        private readonly IMapper _mapper;
 
-        // public CatalogController(IMediator mediator, DataContext dataContext)
-        // {
-        //     _mediator = mediator;
-        //     _dataContext = dataContext;
-        // }
+        public CatalogOldController(IMediator mediator, DataContext dataContext)
+        {
+            _mediator = mediator;
+            _dataContext = dataContext;
+        }
 
         // [HttpGet]
         // public async Task<ActionResult<PagedList<CatalogItem>>> GetProducts([FromQuery] CatalogParams catalogParams)

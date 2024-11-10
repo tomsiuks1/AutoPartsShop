@@ -13,30 +13,30 @@ namespace Application.Catalog.Item
 {
     public class GetCatalogFilters
     {
-        public class Query : IRequest<CatalogItemFilter>
+        public class Query : IRequest<ProductFilter>
         {
         }
 
-        public class Handler : IRequestHandler<Query, CatalogItemFilter>
-        {
-            private readonly DataContext _context;
+        // public class Handler : IRequestHandler<Query, CatalogItemFilter>
+        // {
+        //     private readonly DataContext _context;
 
-            public Handler(DataContext context)
-            {
-                _context = context;
-            }
+        //     public Handler(DataContext context)
+        //     {
+        //         _context = context;
+        //     }
 
-            public async Task<CatalogItemFilter> Handle(Query request, CancellationToken cancellationToken)
-            {
-                var brands = await _context.CatalogItems.Select(p => p.Brand).Distinct().ToListAsync();
-                var types = await _context.CatalogItems.Select(p => p.Type).Distinct().ToListAsync();
+        //     public async Task<CatalogItemFilter> Handle(Query request, CancellationToken cancellationToken)
+        //     {
+        //         var brands = await _context.CatalogItems.Select(p => p.Brand).Distinct().ToListAsync();
+        //         var types = await _context.CatalogItems.Select(p => p.Type).Distinct().ToListAsync();
 
-                return new CatalogItemFilter
-                {
-                    Brands = brands,
-                    Types = types
-                };
-            }
-        }
+        //         return new CatalogItemFilter
+        //         {
+        //             Brands = brands,
+        //             Types = types
+        //         };
+        //     }
+        // }
     }
 }

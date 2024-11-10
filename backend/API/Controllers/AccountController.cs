@@ -126,7 +126,7 @@ namespace API.Controllers
 
             return await _dataContext.Baskets
                 .Include(i => i.Items)
-                .ThenInclude(p => p.CatalogItem)
+                .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(basket => basket.BuyerId == buyerId);
         }
     }

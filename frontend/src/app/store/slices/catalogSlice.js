@@ -22,7 +22,7 @@ function getAxiosParams(catalogParams) {
 }
 
 export const fetchCatalogItemsAsync = createAsyncThunk(
-  "catalog/fetchProductsAsync",
+  "products/fetchProductsAsync",
   async (_, thunkAPI) => {
     const params = getAxiosParams(thunkAPI.getState().catalog.catalogParams);
     try {
@@ -36,7 +36,7 @@ export const fetchCatalogItemsAsync = createAsyncThunk(
 );
 
 export const fetchCatalogItemAsync = createAsyncThunk(
-  "catalog/fetchProductAsync",
+  "products/fetchProductAsync",
   async (catalogItemId, thunkAPI) => {
     try {
       const catalogItem = await agent.Catalog.details(catalogItemId);
@@ -48,7 +48,7 @@ export const fetchCatalogItemAsync = createAsyncThunk(
 );
 
 export const fetchFilters = createAsyncThunk(
-  "catalog/fetchFilters",
+  "products/fetchFilters",
   async (_, thunkAPI) => {
     try {
       return agent.Catalog.fetchFilters();

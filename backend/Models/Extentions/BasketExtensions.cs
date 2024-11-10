@@ -16,12 +16,12 @@ namespace Models.Extentions
                 ClientSecret = basket.ClientSecret,
                 Items = basket.Items.Select(item => new BasketItemDto
                 {
-                    CatalogItemId = item.CatalogItemId,
-                    Name = item.CatalogItem.Name,
-                    Price = item.CatalogItem.Price,
-                    PictureUrl = item.CatalogItem.PictureUrl,
-                    Type = item.CatalogItem.Type,
-                    Brand = item.CatalogItem.Brand,
+                    CatalogItemId = item.ProductId,
+                    Name = item.Product.Name,
+                    Price = item.Product.Price,
+                    PictureUrl = item.Product.PictureUrl,
+                    Type = item.Product.Type,
+                    Brand = item.Product.Brand,
                     Quantity = item.Quantity
                 }).ToList()
             };
@@ -31,7 +31,7 @@ namespace Models.Extentions
         {
             return query
                 .Include(i => i.Items)
-                .ThenInclude(p => p.CatalogItem)
+                .ThenInclude(p => p.Product)
                 .Where(b => b.BuyerId == buyerId);
         }
     }

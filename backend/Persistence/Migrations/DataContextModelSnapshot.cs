@@ -159,7 +159,7 @@ namespace Persistence.Migrations
                     b.Property<Guid?>("BasketId1")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CatalogItemId")
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -169,12 +169,54 @@ namespace Persistence.Migrations
 
                     b.HasIndex("BasketId1");
 
-                    b.HasIndex("CatalogItemId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("BasketItem");
                 });
 
-            modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
+            modelBuilder.Entity("Models.Catalog.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Models.Catalog.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Models.Catalog.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -185,6 +227,9 @@ namespace Persistence.Migrations
 
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -211,49 +256,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CatalogItems");
-                });
-
-            modelBuilder.Entity("Models.Catalog.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Models.Catalog.Comment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CatalogItemId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CatalogItemId");
-
-                    b.ToTable("Comments");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Models.Orders.Order", b =>
@@ -337,19 +340,19 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("98a44292-1fea-4b4b-b7ff-8d745c702c86"),
+                            Id = new Guid("e28e4ea6-fdd4-41f4-a81e-d57e475b134e"),
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = new Guid("a5127d67-6d51-46d6-841e-1d6f5acaf4c3"),
+                            Id = new Guid("f1abfea4-a71f-49ce-8a37-e1fe799a9897"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("59c44b49-371b-40cf-9ad2-b462d7274254"),
+                            Id = new Guid("6a2f97bf-75f3-4428-b99b-2cfaf1084f65"),
                             Name = "User",
                             NormalizedName = "User"
                         });
@@ -512,37 +515,37 @@ namespace Persistence.Migrations
                         .WithMany("Items")
                         .HasForeignKey("BasketId1");
 
-                    b.HasOne("Models.Catalog.CatalogItem", "CatalogItem")
+                    b.HasOne("Models.Catalog.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("CatalogItemId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Basket");
 
-                    b.Navigation("CatalogItem");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
+            modelBuilder.Entity("Models.Catalog.Comment", b =>
+                {
+                    b.HasOne("Models.Catalog.Product", "Product")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Models.Catalog.Product", b =>
                 {
                     b.HasOne("Models.Catalog.Category", "Category")
-                        .WithMany("CatalogItems")
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Models.Catalog.Comment", b =>
-                {
-                    b.HasOne("Models.Catalog.CatalogItem", "CatalogItem")
-                        .WithMany("Comments")
-                        .HasForeignKey("CatalogItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CatalogItem");
                 });
 
             modelBuilder.Entity("Models.Orders.Order", b =>
@@ -629,14 +632,14 @@ namespace Persistence.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("Models.Catalog.CatalogItem", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
             modelBuilder.Entity("Models.Catalog.Category", b =>
                 {
-                    b.Navigation("CatalogItems");
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Models.Catalog.Product", b =>
+                {
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("Models.Orders.Order", b =>

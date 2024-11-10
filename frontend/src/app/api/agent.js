@@ -82,23 +82,21 @@ const request = {
 };
 
 const Catalog = {
-  getCarMakers: () => request.get("/catalog/car/makers"),
-  getCarModels: () => request.get("/catalog/car/models"),
-  getCatalog: (params) => request.get("/catalog", params),
-  details: (id) => request.get(`/catalog/${id}`),
-  fetchFilters: () => request.get("/catalog/filters"),
+  getCatalog: (params) => request.get("/products", params),
+  details: (id) => request.get(`/products/${id}`),
+  fetchFilters: () => request.get("/products/filters"),
 };
 
 const Basket = {
   get: () => request.get("basket"),
   addItem: (catalogItemId, quantity = 1) =>
     request.post(
-      `basket?catalogItemId=${catalogItemId}&quantity=${quantity}`,
+      `basket?productId=${catalogItemId}&quantity=${quantity}`,
       {}
     ),
   removeItem: (catalogItemId, quantity = 1) =>
     request.delete(
-      `basket?catalogItemId=${catalogItemId}&quantity=${quantity}`
+      `basket?productId=${catalogItemId}&quantity=${quantity}`
     ),
 };
 
@@ -117,8 +115,6 @@ const Account = {
 
 function createFormData(item) {
   const formData = new FormData();
-  // eslint-disable-next-line no-debugger
-  debugger;
   for (const key in item) {
     formData.append(key, item[key]);
   }

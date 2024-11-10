@@ -20,8 +20,6 @@ export const router = createBrowserRouter([
       {
         element: <RequireAuth roles={["User", "Member", "Admin"]} />,
         children: [
-          { path: "/about", element: <AboutPage /> },
-          { path: "/catalog", element: <CatalogPage /> },
           { path: "catalog/:id", element: <CatalogItemDetails /> },
           { path: "/checkout", element: <CheckoutWrapper /> },
           { path: "/orders", element: <OrdersPage /> },
@@ -31,6 +29,8 @@ export const router = createBrowserRouter([
         element: <RequireAuth roles={["Admin"]} />,
         children: [{ path: "/inventory", element: <Inventory /> }],
       },
+      { path: "/about", element: <AboutPage /> },
+      { path: "/catalog", element: <CatalogPage /> },
       { path: "/basket", element: <BasketPage /> },
       { path: "/not-found", element: <NotFound /> },
       { path: "*", element: <Navigate replace to="/not-found" /> },

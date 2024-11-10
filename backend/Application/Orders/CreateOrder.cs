@@ -43,7 +43,7 @@ namespace Application.Orders
 
                 foreach (var item in basket.Items)
                 {
-                    var catalogItem = await _context.CatalogItems.FindAsync(item.CatalogItemId);
+                    var catalogItem = await _context.Products.FindAsync(item.ProductId);
                     var itemOrdered = new CatalogItemOrdered
                     {
                         ProductId = catalogItem.Id,
