@@ -61,16 +61,26 @@ namespace API.Controllers
             _context.Comments.Add(newComment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetComment), new { productId, id = newComment.Id }, comment);
+            return CreatedAtAction(nameof(GetComment), new { productId, id = newComment.Id }, newComment);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(Guid productId, Guid id, UpdateCommentDto comment)
+        public async Task<IActionResult> UpdateComment(Guid productId, Guid id, UpdateCommentDto commentDto)
         {
-            if (id != comment.Id || productId != comment.ProductId)
+            if (id != commentDto.Id || productId != commentDto.ProductId)
             {
                 return BadRequest();
             }
+
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id && c.ProductId == productId);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            // Map the properties from the DTO to the entity
+            comment.Content = commentDto.Content;
+            comment.CreatedAt = commentDto.CreatedAt;
 
             _context.Entry(comment).State = EntityState.Modified;
 

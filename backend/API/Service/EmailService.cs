@@ -1,22 +1,36 @@
 ﻿using System.Net.Mail;
 using System.Net;
+using API.Interfaces;
 
 namespace API.Service
 {
-    public static class EmailService
+    public class EmailService : IEmailService
     {
-        public static async Task SendEmail(string toEmail, string body)
+        private readonly string _smtpServer;
+        private readonly int _port;
+        private readonly string _fromEmail;
+        private readonly string _password;
+
+        public EmailService(string smtpServer, int port, string fromEmail, string password)
         {
-            using (var smtpClient = new SmtpClient("smtp.gmail.com"))
+            _smtpServer = smtpServer;
+            _port = port;
+            _fromEmail = fromEmail;
+            _password = password;
+        }
+
+        public async Task SendEmail(string toEmail, string body)
+        {
+            using (var smtpClient = new SmtpClient(_smtpServer))
             {
-                smtpClient.Port = 587;
-                smtpClient.Credentials = new NetworkCredential("tomsiuks4@gmail.com", "wtmp ufdk atrl doxl");
+                smtpClient.Port = _port;
+                smtpClient.Credentials = new NetworkCredential(_fromEmail, _password);
                 smtpClient.EnableSsl = true;
 
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("tomsiuks4@gmail.com"),
-                    Subject = $"Order confirmation",
+                    From = new MailAddress(_fromEmail),
+                    Subject = "Order confirmation",
                     Body = body,
                     IsBodyHtml = false,
                 };

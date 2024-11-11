@@ -1,5 +1,5 @@
-﻿using API.Service;
-using Application.Orders;
+﻿using API.Interfaces;
+using API.Service;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -21,7 +21,7 @@ namespace API.Extentions
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddMediatR(config => config.RegisterServicesFromAssemblies(typeof(GetOrder.Handler).Assembly));
+            services.AddScoped<IEmailService>(provider => new EmailService("smtp.gmail.com", 587, "tomsiuks4@gmail.com", "wtmp ufdk atrl doxl"));
             services.AddScoped<PaymentService>();
 
             return services;
