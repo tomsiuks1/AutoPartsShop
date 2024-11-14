@@ -50,6 +50,8 @@ namespace API.Controllers
 
             if (isAuthenticated)
             {
+                var token = await _tokenService.CreateToken(user);
+                Response.Headers.Append("Authorization", $"Bearer {token}");
                 return await CreateUserObject(user, anonBasket != null ? anonBasket.MapBasketToDto() : userBasket?.MapBasketToDto());
             }
 
@@ -78,6 +80,9 @@ namespace API.Controllers
             if(result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "Member");
+
+                var token = await _tokenService.CreateToken(user);
+                Response.Headers.Append("Authorization", $"Bearer {token}");
                 return await CreateUserObject(user);
             }
 
@@ -100,7 +105,6 @@ namespace API.Controllers
             {
                 DisplayName = user.UserName,
                 Image = null,
-                Token = await _tokenService.CreateToken(user),
                 UserName = user.UserName,
                 Basket = basket
             };

@@ -39,10 +39,26 @@ namespace Persistence
             {
                 var categories = new List<Category>
                 {
-                    new Category { Name = "Engines" },
-                    new Category { Name = "Electronics" },
-                    new Category { Name = "Timing Belts" },
-                    new Category { Name = "Engine Parts" }
+                    new Category {
+                        Id = Guid.Parse("7ad5058f-5b0c-493f-8ba7-ce6d01247c55"),
+                        Name = "Engines",
+                        Products = new List<Product>()
+                    },
+                    new Category { 
+                        Id = Guid.Parse("81fb4196-6036-4045-b7b3-e367407850a8"),
+                        Name = "Electronics",
+                        Products = new List<Product>()
+                    },
+                    new Category { 
+                        Id = Guid.Parse("df07f1c2-2cdd-4c63-910c-0761c42cc36c"),
+                        Name = "Timing Belts",
+                        Products = new List<Product>()
+                    },
+                    new Category { 
+                        Id = Guid.Parse("7b19cfaf-b0cf-4160-bf30-6d0dfbd32dba"),
+                        Name = "Engine Parts",
+                        Products = new List < Product >()
+                    }
                 };
 
                 await context.Categories.AddRangeAsync(categories);
@@ -51,6 +67,9 @@ namespace Persistence
 
             if (!context.Products.Any())
             {
+                var bob = await userManager.FindByEmailAsync("bob@gmail.com");
+                var rob = await userManager.FindByEmailAsync("rob@gmail.com");
+
                 var enginesCategory = context.Categories.First(c => c.Name == "Engines");
                 var electronicsCategory = context.Categories.First(c => c.Name == "Electronics");
                 var timingBeltsCategory = context.Categories.First(c => c.Name == "Timing Belts");
@@ -60,6 +79,7 @@ namespace Persistence
                 {
                     new Product
                     {
+                        Id = Guid.Parse("83743a08-ad0e-466d-864f-85735440b68a"),
                         Name = "V8 Engine",
                         Description = "High performance V8 engine.",
                         Price = 5000,
@@ -72,6 +92,7 @@ namespace Persistence
                     },
                     new Product
                     {
+                        Id = Guid.Parse("b57983bf-707d-4477-96fa-18f66c16d73e"),
                         Name = "BMW 328 oil pump",
                         Description = "Latest model with advanced features.",
                         Price = 699,
@@ -84,6 +105,7 @@ namespace Persistence
                     },
                     new Product
                     {
+                        Id = Guid.Parse("42b523bb-6c90-45f2-acca-be5d5b6065d9"),
                         Name = "Timing Belt",
                         Description = "Durable timing belt for various engines.",
                         Price = 5900,
@@ -92,10 +114,32 @@ namespace Persistence
                         Brand = "Porche",
                         Type = timingBeltsCategory.Name,
                         CreatedAt = DateTime.UtcNow,
-                        QuantityInStock = 99
+                        QuantityInStock = 99,
+                        Comments = new List<Comment>
+                        {
+                            new Comment
+                            {
+                                Id = Guid.Parse("c01fa4c0-7af4-4f44-a026-00cd8c3300d8"),
+                                DisplayName = bob.Email,
+                                Content = "This timing belt is amazing!",
+                                UserId = userManager.Users.First(u => u.DisplayName == "Bob").Id,
+                                CreatedAt = DateTime.UtcNow,
+                                ProductId = Guid.Parse("42b523bb-6c90-45f2-acca-be5d5b6065d9")
+                            },
+                            new Comment
+                            {
+                                Id = Guid.Parse("90ac1822-7481-4dae-bf93-50714cd4a44b"),
+                                DisplayName = bob.Email,
+                                Content = "This timing belt is bad!",
+                                UserId = userManager.Users.First(u => u.DisplayName == "Bob").Id,
+                                CreatedAt = DateTime.UtcNow,
+                                ProductId = Guid.Parse("42b523bb-6c90-45f2-acca-be5d5b6065d9")
+                            }
+                        }
                     },
                     new Product
                     {
+                        Id = Guid.Parse("618bb071-320e-4a38-a4a7-03a57e928efc"),
                         Name = "Spark Plug",
                         Description = "High performance spark plug.",
                         Price = 899,
@@ -104,7 +148,18 @@ namespace Persistence
                         Brand = "NGK",
                         Type = electronicsCategory.Name,
                         CreatedAt = DateTime.UtcNow,
-                        QuantityInStock = 10
+                        QuantityInStock = 10,
+                        Comments = new List<Comment>
+                        {
+                            new Comment
+                            {
+                                Id = Guid.Parse("4ccb411a-681b-4ef6-8a58-5c7f745ada60"),
+                                Content = "Great value for the price.",
+                                UserId = rob.Id,
+                                ProductId = Guid.Parse("618bb071-320e-4a38-a4a7-03a57e928efc"),
+                                CreatedAt = DateTime.UtcNow.AddHours(-1)
+                            }
+                        }
                     }
                 };
 
@@ -112,11 +167,11 @@ namespace Persistence
                 await context.SaveChangesAsync();
             }
 
+            //var product = await context.Products.FirstOrDefaultAsync(ci => ci.Id == Guid.Parse("42b523bb-6c90-45f2-acca-be5d5b6065d9"));
+
             if (!context.Comments.Any())
             {
-                var bob = await userManager.FindByEmailAsync("bob@gmail.com");
                 var thomas = await userManager.FindByEmailAsync("thomas@gmail.com");
-                var rob = await userManager.FindByEmailAsync("rob@gmail.com");
 
                 var smartphone = context.Products.First(ci => ci.Name == "Smartphone");
                 var v8Engine = context.Products.First(ci => ci.Name == "V8 Engine");
@@ -124,25 +179,12 @@ namespace Persistence
                 var comments = new List<Comment>
                 {
                     new Comment
-                    {
-                        Content = "This smartphone is amazing!",
-                        UserId = bob.Id,
-                        ProductId = smartphone.Id,
-                        CreatedAt = DateTime.UtcNow
-                    },
-                    new Comment
-                    {
+                    {   
+                        Id = Guid.Parse("2987cf66-a031-4333-b8b2-739788a38459"),
                         Content = "The V8 engine performs exceptionally well.",
                         UserId = thomas.Id,
                         ProductId = v8Engine.Id,
                         CreatedAt = DateTime.UtcNow.AddMinutes(-10)
-                    },
-                    new Comment
-                    {
-                        Content = "Great value for the price.",
-                        UserId = rob.Id,
-                        ProductId = smartphone.Id,
-                        CreatedAt = DateTime.UtcNow.AddHours(-1)
                     }
                 };
 

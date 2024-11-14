@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Catalog;
 using Models.DTOs;
 using Persistence;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -51,11 +52,20 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Comment>> CreateComment(Guid productId, CreateCommentDto comment)
         {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);
+
+            if (product == null)
+            {
+                return BadRequest("Product does not exist");
+            }
+
             var newComment = new Comment
             {
                 ProductId = productId,
                 Content = comment.Content,
-                UserId = comment.UserId,
+                Product = product,
+                UserId = user.Id,
             };
 
             _context.Comments.Add(newComment);
@@ -67,38 +77,15 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateComment(Guid productId, Guid id, UpdateCommentDto commentDto)
         {
-            if (id != commentDto.Id || productId != commentDto.ProductId)
-            {
-                return BadRequest();
-            }
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
 
-            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id && c.ProductId == productId);
             if (comment == null)
             {
-                return NotFound();
+                return BadRequest("Comment does not exist");
             }
 
-            // Map the properties from the DTO to the entity
             comment.Content = commentDto.Content;
-            comment.CreatedAt = commentDto.CreatedAt;
-
-            _context.Entry(comment).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Comments.Any(e => e.Id == id && e.ProductId == productId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

@@ -21,7 +21,7 @@ namespace API.Controllers
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
-            if (basket == null) return NotFound();
+            if (basket == null) return NoContent();
 
             return basket.MapBasketToDto();
         }
@@ -31,19 +31,17 @@ namespace API.Controllers
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
-            if (basket == null) return NotFound();
+            if (basket == null) return BadRequest();
 
             basket.RemoveItem(productId, quantity);
 
-            var result = await _dataContext.SaveChangesAsync() > 0;
+            await _dataContext.SaveChangesAsync();
 
-            if (result) return Ok();
-
-            return BadRequest(new ProblemDetails { Title = "Problem removing item from the basket" });
+            return Ok();
         }
 
         [HttpPut("{productId}")]
-        public async Task<ActionResult> UpdateBasket(Guid productId, int quantity = 1)
+        public async Task<ActionResult<BasketDto>> UpdateBasket(Guid productId, int quantity = 1)
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
@@ -57,7 +55,7 @@ namespace API.Controllers
 
             var result = await _dataContext.SaveChangesAsync() > 0;
 
-            if (result) return CreatedAtRoute("GetBasket", basket.MapBasketToDto());
+            if (result) return Ok(basket.MapBasketToDto());
 
             return BadRequest(new ProblemDetails { Title = "Problem saving item to basket" });
         }

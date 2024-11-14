@@ -112,7 +112,7 @@ namespace API.Controllers
 
             await _emailService.SendEmail(User.Identity.Name, emailBody);
 
-            return CreatedAtRoute("GetOrder", new { id = order.Id }, order.Id);
+            return CreatedAtRoute("GetOrder", new { id = order.Id }, order);
         }
     }
 }

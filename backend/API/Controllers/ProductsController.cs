@@ -29,7 +29,7 @@ namespace API.Controllers
             return catalogItems;
         }
 
-        [HttpGet("catalogItem/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetCatalogItem(Guid id)
         {
             var catalogItem = await _context.Products
@@ -54,30 +54,40 @@ namespace API.Controllers
                 return BadRequest("Category not found!");
             }
 
-            var catalogItem = new Product
+            var product = new Product
             {
                 Name = catalogItemDto.Name,
-                CategoryId = catalogItemDto.CategoryId
+                CategoryId = catalogItemDto.CategoryId,
+                Type = category.Name,
+                Brand = catalogItemDto.Brand
             };
 
-            _context.Products.Add(catalogItem);
+            _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCatalogItem", new { id = catalogItem.Id }, catalogItem);
+            return CreatedAtAction("GetCatalogItem", new { id = product.Id }, product);
         }
 
         [HttpPut("{productId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateProduct(Guid productId, CatalogItemUpdateDto catalogItemDto)
+        public async Task<IActionResult> UpdateProduct(Guid productId, CatalogItemUpdateDto productDto)
         {
-            var catalogItem = await _context.Products.FindAsync(productId);
-            if (catalogItem == null)
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
             {
-                return NotFound();
+                return BadRequest("Product not found!");
             }
 
-            catalogItem.Name = catalogItemDto.Name;
-            catalogItem.CategoryId = catalogItemDto.CategoryId;
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == productDto.CategoryId);
+
+            if (category == null)
+            {
+                return BadRequest("Category not found!");
+            }
+
+            product.Name = productDto.Name;
+            product.CategoryId = productDto.CategoryId;
+            product.Brand = productDto.Brand;
 
             try
             {
@@ -87,7 +97,7 @@ namespace API.Controllers
             {
                 if (!_context.Products.Any(e => e.Id == productId))
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
                 else
                 {
@@ -95,7 +105,7 @@ namespace API.Controllers
                 }
             }
 
-            return Ok(catalogItem);
+            return Ok(product);
         }
         
         [HttpDelete("{id}")]
@@ -111,23 +121,23 @@ namespace API.Controllers
             _context.Products.Remove(catalogItem);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost("{productId}/comment")]
         public async Task<ActionResult<Comment>> AddCommentToCatalogItem(Guid productId, Comment comment)
         {
-            var catalogItem = await _context.Products.FindAsync(productId);
-            if (catalogItem == null)
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             comment.ProductId = productId;
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCatalogItem", new { id = productId }, comment);
+            return Ok(comment);
         }
 
         [HttpGet("filters")]

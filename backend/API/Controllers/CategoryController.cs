@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.Catalog;
+using Models.DTOs;
 using Persistence;
 
 namespace API.Controllers
@@ -54,30 +55,18 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(Guid id, Category category)
+        public async Task<IActionResult> UpdateCategory(Guid id, UpdateCategoryDto updateCategoryDto)
         {
-            if (id != category.Id)
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(category == null)
             {
-                return BadRequest();
+                return BadRequest("Category not found!");
             }
 
-            _context.Entry(category).State = EntityState.Modified;
+            category.Name = updateCategoryDto.Name;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Categories.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -95,6 +84,32 @@ namespace API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPost("{categoryId}/product/{productId}")]
+        public async Task<ActionResult<Product>> AddProductToCategory(Guid categoryId, Guid productId)
+        {
+            var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == categoryId);
+
+            if (category == null)
+            {
+                return NotFound("Category not found");
+            }
+
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null)
+            {
+                return NotFound("Product not found");
+            }
+
+            if (product.CategoryId != categoryId)
+            {
+                product.CategoryId = categoryId;
+                await _context.SaveChangesAsync();
+            }
+
+            return CreatedAtAction("GetCategory", new { id = categoryId }, category);
         }
     }
 }

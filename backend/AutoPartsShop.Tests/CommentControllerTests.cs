@@ -86,8 +86,7 @@ namespace AutoPartsShop.Tests
             var productId = await _context.Products.Select(p => p.Id).FirstAsync();
             var newComment = new CreateCommentDto
             {
-                Content = "Amazing!",
-                UserId = await _context.Users.Select(u => u.Id).FirstAsync()
+                Content = "Amazing!"
             };
 
             var result = await _controller.CreateComment(productId, newComment);
