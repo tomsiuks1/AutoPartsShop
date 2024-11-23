@@ -1,7 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import { router } from "../router/Routes";
-import { store } from "../store/configureStore";
 
 const sleep = () => new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -11,9 +10,9 @@ axios.defaults.withCredentials = true;
 const responseBody = (response) => response.data;
 
 axios.interceptors.request.use((config) => {
-  const token = store.getState().account.user?.token;
+  const token = localStorage.getItem("autoPartsShopAuthorizationToken");
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = JSON.parse(token);
   }
   return config;
 });
@@ -22,6 +21,12 @@ axios.interceptors.response.use(
   async (response) => {
     if (import.meta.env.DEV) await sleep();
     const pagination = response.headers["pagination"];
+    const authorization = response.headers["authorization"];
+
+    if (authorization) {
+      localStorage.setItem("autoPartsShopAuthorizationToken", JSON.stringify(authorization));
+    }
+
     if (pagination) {
       response.data = {
         items: response.data,
@@ -105,6 +110,7 @@ const Orders = {
   fetch: (id) => request.get(`orders/${id}`),
   create: (values) => request.post("orders", values),
 };
+
 
 const Account = {
   login: (values) => request.post("/account/login", values),

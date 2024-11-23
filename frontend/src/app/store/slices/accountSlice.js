@@ -13,7 +13,6 @@ export const signInUser = createAsyncThunk(
     try {
       const userDto = await agent.Account.login(data);
       const { ...user } = userDto;
-      localStorage.setItem("user", JSON.stringify(user));
       router.navigate("/catalog");
       return user;
     } catch (error) {
@@ -40,18 +39,13 @@ export const registerUser = createAsyncThunk(
 export const fetchCurrentUser = createAsyncThunk(
   "account/currentUser",
   async (_, thunkAPI) => {
-    thunkAPI.dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
     try {
       const userDto = await agent.Account.currentUser();
       const { ...user } = userDto;
-      localStorage.setItem("user", JSON.stringify(user));
       return user;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.data });
     }
-  },
-  {
-    condition: () => !!localStorage.getItem("user"),
   }
 );
 
@@ -78,7 +72,7 @@ export const accountSlice = createSlice({
     builder
       .addCase(fetchCurrentUser.rejected, (state) => {
         state.user = null;
-        localStorage.removeItem("user");
+        localStorage.removeItem("autoPartsShopAuthorizationToken");
         toast.error("Session expired - please login again");
         router.navigate("/");
       })

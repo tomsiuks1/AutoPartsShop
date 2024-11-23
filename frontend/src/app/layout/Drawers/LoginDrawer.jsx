@@ -42,6 +42,8 @@ function LoginDrawer({ open, onClose }) {
         await dispatch(registerUser(data));
       }
 
+      // eslint-disable-next-line no-debugger
+      debugger;
       navigate(location.state?.from || "/");
       onClose();
     } catch (error) {

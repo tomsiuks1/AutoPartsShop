@@ -4,6 +4,8 @@ namespace Models.RequestHelpers
 {
     public class PagedList<T> : List<T>
     {
+        public MetaData MetaData { get; set; }
+
         public PagedList(List<T> items, int count, int pageNumber, int pageSize)
         {
             MetaData = new MetaData
@@ -15,7 +17,6 @@ namespace Models.RequestHelpers
             };
             AddRange(items);
         }
-        public MetaData MetaData { get; set; }
 
         public static async Task<PagedList<T>> ToPagedList(IQueryable<T> query, int pageNumber, int pageSize)
         {
