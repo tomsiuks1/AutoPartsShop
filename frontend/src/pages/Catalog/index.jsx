@@ -27,8 +27,7 @@ export default function CatalogPage() {
 
   return (
     <Grid container columnSpacing={5} sx={{ marginTop: "100px" }}>
-      <Grid item xs={3}>
-        <Paper sx={{ mb: 2 }}>{/* <ProductSearch /> */}</Paper>
+      <Grid item xs={12} md={3}>
         <Paper sx={{ p: 2, mb: 2 }}>
           <RadioButtonGroup
             selectedValue={catalogParams.orderBy}
@@ -53,11 +52,11 @@ export default function CatalogPage() {
           />
         </Paper>
       </Grid>
-      <Grid item xs={9}>
+      <Grid item xs={12} md={9}>
         <CatalogList catalogItems={catalogItems} />
       </Grid>
-      <Grid item xs={3} />
-      <Grid item xs={9} sx={{ mb: 2 }}>
+      <Grid item xs={false} md={3} />
+      <Grid item xs={12} md={9} sx={{ mb: 2 }}>
         {metaData && (
           <AppPagination
             metaData={metaData}

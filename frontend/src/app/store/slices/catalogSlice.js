@@ -62,7 +62,7 @@ export const fetchFilters = createAsyncThunk(
 function initParams() {
   return {
     pageNumber: 1,
-    pageSize: 6,
+    pageSize: 2,
     orderBy: "name",
     brands: [],
     types: [],
