@@ -106,8 +106,9 @@ namespace API.Controllers
                 return BadRequest(new ProblemDetails { Title = "Error occurred creating order" });
             }
 
-            var emailBody = $"Order confirmation\n";
-            emailBody += $"Shipping address: {orderDto.ShippingAddress}\n";
+            var emailBody = $"Order confirmation\n\n";
+            emailBody += $"{orderDto.ShippingAddress.FullName}, thanks for choosing AutoPartsShop!\n";
+            emailBody += $"Shipping address: {orderDto.ShippingAddress.Address1}, {orderDto.ShippingAddress.City}, {orderDto.ShippingAddress.Country}\n";
             emailBody += $"Delivery fee: {order.DeliveryFee}\n";
 
             await _emailService.SendEmail(User.Identity.Name, emailBody);

@@ -8,21 +8,28 @@ import {
   TableRow,
   TextField,
   Typography,
+  ListItem,
+  List,
+  Button,
+  IconButton
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import EditIcon from '@mui/icons-material/Edit';
 import NotFound from "../NotFound";
-import LoadingComponent from "../../components/LoadingIndicator";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 import {
   addBasketItemAsync,
   removeBasketItemAsync,
 } from "../../app/store/slices/basketSlice";
+import { format, parseISO } from 'date-fns';
 import {
   fetchCatalogItemAsync,
   catalogSelectors,
 } from "../../app/store/slices/catalogSlice";
+import LoadingIndicator from "../../components/LoadingIndicator";
+import agent from "../../app/api/agent";
 
 export default function CatalogItemDetails() {
   const { id } = useParams();
@@ -31,8 +38,78 @@ export default function CatalogItemDetails() {
   const product = useAppSelector((state) =>
     catalogSelectors.selectById(state, id)
   );
-  const { status: productStatus } = useAppSelector((state) => state.catalog);
+  // const { status: productStatus } = useAppSelector((state) => state.catalog);
+  const currentUser = useAppSelector((state) => state.account.user);
+  
   const [quantity, setQuantity] = useState(0);
+  const [isLoadingIndicatorActive, setIsLoadingIndicatorActive] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingContent, setEditingContent] = useState('');
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+
+    setIsLoadingIndicatorActive(true);
+    try {
+      const comment = await agent.Comments.addComment(product.id, {
+        content: newComment,
+      });
+      setComments([...comments, comment]);
+      setNewComment('');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingIndicatorActive(false);
+    }
+  };
+
+  const handleEditClick = (commentId, content) => {
+    setEditingCommentId(commentId);
+    setEditingContent(content);
+  };
+
+  const handleSaveEdit = async () => {
+    setIsLoadingIndicatorActive(true);
+    try {
+      await agent.Comments.updateComment(product.id, editingCommentId, { content: editingContent });
+      await agent.Comments.getComments(product.id)
+      .then(response => setComments(response))
+      .catch(error => console.log(error));
+      setEditingCommentId(null);
+      setEditingContent('');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingIndicatorActive(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if(!commentId) {
+      return;
+    }
+
+    setIsLoadingIndicatorActive(true);
+    try {
+      await agent.Comments.deleteComment(product.id, commentId);
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== commentId)
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingIndicatorActive(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingContent('');
+  };
+
   const item = basket?.items.find(
     (i) => i.catalogItemId === product?.catalogItemId
   );
@@ -40,6 +117,22 @@ export default function CatalogItemDetails() {
   useEffect(() => {
     if (item) setQuantity(item.quantity);
     if (!product && id) dispatch(fetchCatalogItemAsync(id));
+  
+    const fetchData = async () => {
+      setIsPageLoading(true);
+      try {
+        if (product?.id) {
+          const comments = await agent.Comments.getComments(product.id);
+          setComments(comments);
+        }
+      } catch (error) {
+        console.error("Failed to fetch comments:", error);
+      } finally {
+        setIsPageLoading(false);
+      }
+    };
+  
+    fetchData();
   }, [id, item, product, dispatch]);
 
   function handleInputChange(event) {
@@ -70,12 +163,14 @@ export default function CatalogItemDetails() {
     }
   }
 
-  if (productStatus.includes("pending"))
-    return <LoadingComponent message="Loading product..." />;
+  if (isPageLoading || !product) {
+    return <LoadingIndicator message="Loading Product..." active={true}/>;
+  }
 
   if (!product) return <NotFound />;
 
   return (
+    <>
     <Grid container spacing={6}>
       <Grid item xs={6}>
         <img
@@ -146,5 +241,114 @@ export default function CatalogItemDetails() {
         </Grid>
       </Grid>
     </Grid>
+    <div>
+      <Typography variant="h6" style={{ marginTop: '2rem' }}>
+        Comments
+      </Typography>
+      <List>
+        {comments?.map((comment) => (
+          <ListItem key={comment.id} alignItems="flex-start">
+            <Grid container spacing={1}>
+              <Grid item xs={12}>
+                {editingCommentId === comment.id ? (
+                  <TextField
+                    multiline
+                    rows={2}
+                    fullWidth
+                    value={editingContent}
+                    onChange={(e) => setEditingContent(e.target.value)}
+                  />
+                ) : (
+                  <Typography variant="body1">{comment.content}</Typography>
+                )}
+              </Grid>
+              <Grid item xs={6}>
+                <Typography variant="caption" color="textSecondary">
+                  {format(parseISO(comment?.createdAt), 'PPpp')}
+                </Typography>
+                <Typography variant="caption" color="textSecondary">
+                  {` Created By: ${comment?.displayName}`}
+                </Typography>
+              </Grid>
+              <Grid item xs={6} style={{ textAlign: 'right' }}>
+                {currentUser && comment.userId === currentUser.id && (
+                  <>
+                    {editingCommentId === comment.id ? (
+                      <>
+                        {/* Save and Cancel buttons for editing */}
+                        <LoadingButton
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={handleSaveEdit}
+                          loading={isLoadingIndicatorActive}
+                          disabled={!editingContent.trim()}
+                          style={{ marginRight: '0.5rem' }}
+                        >
+                          Save
+                        </LoadingButton>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          size="small"
+                          onClick={handleCancelEdit}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleEditClick(comment.id, comment.content)}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <LoadingButton
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          onClick={() => handleDeleteComment(comment.id)}
+                          loading={isLoadingIndicatorActive}
+                        >
+                          Delete
+                        </LoadingButton>
+                      </>
+                    )}
+                  </>
+                )}
+              </Grid>
+            </Grid>
+          </ListItem>
+        ))}
+      </List>
+
+      {/* Add New Comment */}
+      <Grid container spacing={2} style={{ marginTop: '1rem' }}>
+        <Grid item xs={12}>
+          <TextField
+            label="Add a comment"
+            variant="outlined"
+            multiline
+            rows={3}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <LoadingButton
+            variant="contained"
+            color="primary"
+            onClick={handleAddComment}
+            loading={isLoadingIndicatorActive}
+            disabled={!newComment.trim()}
+          >
+            Submit
+          </LoadingButton>
+        </Grid>
+      </Grid>
+    </div>
+    </>
   );
 }

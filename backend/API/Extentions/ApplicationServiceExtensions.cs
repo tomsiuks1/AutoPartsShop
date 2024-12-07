@@ -13,7 +13,7 @@ namespace API.Extentions
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000").WithExposedHeaders("Authorization");
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000").WithExposedHeaders("Authorization", "Pagination");
                 });
             });
             services.AddDbContext<DataContext>(options =>

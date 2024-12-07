@@ -27,7 +27,7 @@ export default function OrdersPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <LoadingIndicator message="Loading orders..." />;
+  if (loading) return <LoadingIndicator active={true} message="Loading orders..." />;
 
   if (selectedOrderNumber !== null && orders)
     return (

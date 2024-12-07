@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import agent from "../../api/agent";
 import { router } from "../../router/Routes";
 import { toast } from "react-toastify";
+import { getAuthenticationToken } from "../../util/util";
 
 const initialState = {
   user: null,
@@ -40,6 +41,9 @@ export const fetchCurrentUser = createAsyncThunk(
   "account/currentUser",
   async (_, thunkAPI) => {
     try {
+      if(!getAuthenticationToken()) {
+        return null;
+      }
       const userDto = await agent.Account.currentUser();
       const { ...user } = userDto;
       return user;
@@ -55,11 +59,13 @@ export const accountSlice = createSlice({
   reducers: {
     signOut: (state) => {
       state.user = null;
-      localStorage.removeItem("user");
+      localStorage.removeItem("autoPartsShopAuthorizationToken");
       router.navigate("/");
     },
     setUser: (state, action) => {
-      const claims = JSON.parse(atob(action.payload.token.split(".")[1]));
+      const token = getAuthenticationToken();
+
+      const claims = JSON.parse(atob(token.split(".")[1]));
       const roles =
         claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       state.user = {
@@ -73,7 +79,7 @@ export const accountSlice = createSlice({
       .addCase(fetchCurrentUser.rejected, (state) => {
         state.user = null;
         localStorage.removeItem("autoPartsShopAuthorizationToken");
-        toast.error("Session expired - please login again");
+        // toast.error("Session expired - please login again");
         router.navigate("/");
       })
       .addMatcher(
@@ -82,7 +88,9 @@ export const accountSlice = createSlice({
           action.type === registerUser.fulfilled.type ||
           action.type === fetchCurrentUser.fulfilled.type,
         (state, action) => {
-          const claims = JSON.parse(atob(action.payload.token.split(".")[1]));
+          const token = getAuthenticationToken();
+          const claims = JSON.parse(atob(token.split(".")[1]));
+          
           const roles =
             claims[
               "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"

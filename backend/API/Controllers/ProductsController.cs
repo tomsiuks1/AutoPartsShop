@@ -7,6 +7,7 @@ using Models.Extentions;
 using Persistence;
 using API.Extentions;
 using Microsoft.AspNetCore.Authorization;
+using Stripe;
 
 namespace API.Controllers
 {
@@ -20,17 +21,17 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<Product>>> GetCatalogItems([FromQuery] CatalogParams request)
+        public async Task<ActionResult<PagedList<Models.Catalog.Product>>> GetCatalogItems([FromQuery] CatalogParams request)
         {
             var query = _context.Products.Include(c => c.Comments).Sort(request.OrderBy).Search(request?.SearchTerm).Filter(request?.Brands, request.Types).AsQueryable();
-            var catalogItems = await PagedList<Product>.ToPagedList(query, request.PageNumber, request.PageSize);
+            var catalogItems = await PagedList<Models.Catalog.Product>.ToPagedList(query, request.PageNumber, request.PageSize);
             Response.AddPaginationHeader(catalogItems.MetaData);
 
             return catalogItems;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetCatalogItem(Guid id)
+        public async Task<ActionResult<Models.Catalog.Product>> GetCatalogItem(Guid id)
         {
             var catalogItem = await _context.Products
                 .Include(c => c.Comments)
@@ -46,20 +47,24 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Product>> CreateCatalogItem(CatalogItemCreateDto catalogItemDto)
+        public async Task<ActionResult<Models.Catalog.Product>> CreateCatalogItem(CatalogItemCreateDto catalogItemDto)
         {
-            var category = await _context.Categories.FindAsync(catalogItemDto.CategoryId);
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Name == catalogItemDto.Type);
             if (category == null)
             {
                 return BadRequest("Category not found!");
             }
 
-            var product = new Product
+            var product = new Models.Catalog.Product
             {
                 Name = catalogItemDto.Name,
-                CategoryId = catalogItemDto.CategoryId,
+                Brand = catalogItemDto.Brand,
                 Type = category.Name,
-                Brand = catalogItemDto.Brand
+                CategoryId = category.Id,
+                Price = catalogItemDto.Price,
+                Description = catalogItemDto.Description,
+                QuantityInStock = catalogItemDto.QuantityInStock,
+                PictureUrl = catalogItemDto.PictureUrl
             };
 
             _context.Products.Add(product);
@@ -78,7 +83,7 @@ namespace API.Controllers
                 return BadRequest("Product not found!");
             }
 
-            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == productDto.CategoryId);
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Name == productDto.Type);
 
             if (category == null)
             {
@@ -88,6 +93,13 @@ namespace API.Controllers
             product.Name = productDto.Name;
             product.CategoryId = productDto.CategoryId;
             product.Brand = productDto.Brand;
+            product.Type = productDto.Type;
+            product.Name = category.Name;
+            product.CategoryId = category.Id;
+            product.Price = productDto.Price;
+            product.Description = productDto.Description;
+            product.QuantityInStock = productDto.QuantityInStock;
+            product.PictureUrl = productDto.PictureUrl;
 
             try
             {

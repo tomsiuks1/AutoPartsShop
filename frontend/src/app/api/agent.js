@@ -119,20 +119,31 @@ const Account = {
   fetchAddress: () => request.get("account/savedAddress"),
 };
 
-function createFormData(item) {
-  const formData = new FormData();
-  for (const key in item) {
-    formData.append(key, item[key]);
-  }
-  return formData;
-}
+const Comments = {
+  getComments: (productId) =>
+    axios.get(`/product/${productId}/comments`).then(responseBody),
+  updateComment: (productId, commentId, comment) =>
+    axios.put(`/product/${productId}/comments/${commentId}`, comment).then(responseBody),
+  addComment: (productId, comment) =>
+    axios.post(`/product/${productId}/comments`, comment).then(responseBody),
+  deleteComment: (productId, commentId) =>
+    axios.delete(`/product/${productId}/comments/${commentId}`).then(responseBody),
+};
+
+// function createFormData(item) {
+//   const formData = new FormData();
+//   for (const key in item) {
+//     formData.append(key, item[key]);
+//   }
+//   return formData;
+// }
 
 const Admin = {
   createProduct: (product) =>
-    request.postForm("catalog", createFormData(product)),
-  updateProduct: (product) =>
-    request.putForm("catalog", createFormData(product)),
-  deleteProduct: (id) => request.delete(`catalog/${id}`),
+    axios.post("products", product).then(responseBody),
+  updateProduct: (productId, product) =>
+    axios.put(`products/${productId}`, product).then(responseBody),
+  deleteProduct: (productId) => axios.delete(`products/${productId}`).then(responseBody),
 };
 
 const Payments = {
@@ -145,6 +156,7 @@ const agent = {
   Basket,
   Payments,
   Orders,
+  Comments,
   Admin,
 };
 

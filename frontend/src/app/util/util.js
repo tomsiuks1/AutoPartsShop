@@ -6,3 +6,7 @@ export function getCookie(key) {
 export function currencyFormat(amount) {
   return "$" + (amount / 100).toFixed(2);
 }
+
+export function getAuthenticationToken() {
+  return localStorage.getItem("autoPartsShopAuthorizationToken");
+}

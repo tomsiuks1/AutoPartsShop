@@ -23,7 +23,6 @@ function LoginDrawer({ open, onClose }) {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
-  const [rememberMe, setRememberMe] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
 
   const {
@@ -42,8 +41,6 @@ function LoginDrawer({ open, onClose }) {
         await dispatch(registerUser(data));
       }
 
-      // eslint-disable-next-line no-debugger
-      debugger;
       navigate(location.state?.from || "/");
       onClose();
     } catch (error) {
@@ -106,7 +103,7 @@ function LoginDrawer({ open, onClose }) {
             error={!!errors.password}
             helperText={errors.password?.message}
           />
-          {isLogin && (
+          {/* {isLogin && (
             <FormControlLabel
               control={
                 <Checkbox
@@ -117,7 +114,7 @@ function LoginDrawer({ open, onClose }) {
               }
               label="Remember me"
             />
-          )}
+          )} */}
           <LoadingButton
             loading={isSubmitting}
             disabled={!isValid}
@@ -128,7 +125,7 @@ function LoginDrawer({ open, onClose }) {
           >
             {isLogin ? "Login" : "Register"}
           </LoadingButton>
-          {isLogin && (
+          {/* {isLogin && (
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
@@ -136,7 +133,7 @@ function LoginDrawer({ open, onClose }) {
                 </Link>
               </Grid>
             </Grid>
-          )}
+          )} */}
           <Divider />
         </Box>
       </Box>

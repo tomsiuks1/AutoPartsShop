@@ -10,4 +10,18 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Lab3Analyzer">
+      <HintPath>..\..\..\..\Lab3Analyzer\Lab3Analyzer\bin\Debug\net8.0\Lab3Analyzer.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\tomsi\Desktop\Projects\AutoPartsShop\backend\Models\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\tomsi\Desktop\Projects\AutoPartsShop\backend\Models\.editorconfig" />
+  </ItemGroup>
+
 </Project>

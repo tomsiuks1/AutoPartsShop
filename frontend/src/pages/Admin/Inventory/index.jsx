@@ -25,7 +25,7 @@ import { LoadingButton } from "@mui/lab";
 import agent from "../../../app/api/agent";
 
 export default function Inventory() {
-  const { products, metaData } = useCatalogItems();
+  const { catalogItems, metaData } = useCatalogItems();
   const [editMode, setEditMode] = useState(false);
   const dispatch = useAppDispatch();
   const [selectedProduct, setSelectedProduct] = useState(undefined);
@@ -83,8 +83,8 @@ export default function Inventory() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products &&
-              products.map((product) => (
+            {catalogItems &&
+              catalogItems.map((product) => (
                 <TableRow
                   key={product.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

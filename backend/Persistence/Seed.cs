@@ -157,7 +157,7 @@ namespace Persistence
                                 Content = "Great value for the price.",
                                 UserId = rob.Id,
                                 ProductId = Guid.Parse("618bb071-320e-4a38-a4a7-03a57e928efc"),
-                                CreatedAt = DateTime.UtcNow.AddHours(-1)
+                                CreatedAt = DateTime.UtcNow
                             }
                         }
                     }
@@ -184,7 +184,7 @@ namespace Persistence
                         Content = "The V8 engine performs exceptionally well.",
                         UserId = thomas.Id,
                         ProductId = v8Engine.Id,
-                        CreatedAt = DateTime.UtcNow.AddMinutes(-10)
+                        CreatedAt = DateTime.UtcNow
                     }
                 };
 

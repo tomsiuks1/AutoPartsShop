@@ -1,6 +1,5 @@
 import { Box, Typography, Button, Grid } from "@mui/material";
 import BasketSummary from "../Basket/basketSummary";
-import BasketTable from "../Basket/basketTable";
 import PropTypes from "prop-types";
 
 export default function OrderDetailed({ order, setSelectedOrder }) {
@@ -13,7 +12,7 @@ export default function OrderDetailed({ order, setSelectedOrder }) {
     <>
       <Box display="flex" justifyContent="space-between">
         <Typography sx={{ p: 2 }} gutterBottom variant="h4">
-          Order number {order.id} - {order.orderStatus}
+          Order number {order.id}
         </Typography>
         <Button
           onClick={() => setSelectedOrder(null)}
@@ -24,11 +23,10 @@ export default function OrderDetailed({ order, setSelectedOrder }) {
           Back to orders
         </Button>
       </Box>
-      <BasketTable items={order.orderItem} isBasket={false} />
       <Grid container>
         <Grid item xs={6} />
         <Grid item xs={6}>
-          <BasketSummary subtotal={subtotal} />
+          <BasketSummary order={order} subtotal={subtotal} />
         </Grid>
       </Grid>
     </>

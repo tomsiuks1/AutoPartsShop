@@ -21,6 +21,7 @@ import SignedInMenu from "./SignedInMenu";
 import { MIDDLE_LINKS } from "../../constants";
 import "./styles.css";
 import { ShoppingCart } from "@mui/icons-material";
+import logo from "../../assets/images/logo.svg";
 
 const logoStyle = {
   width: "140px",
@@ -31,7 +32,7 @@ const logoStyle = {
 function Header({ mode, handleThemeChange }) {
   const { user } = useAppSelector((state) => state.account);
   const { basket } = useAppSelector((state) => state.basket);
-  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = basket?.items?.reduce((sum, item) => sum + item.quantity, 0);
 
   const [openMenuDrawer, setOpenMenuDrawer] = useState(false);
   const [openLoginDrawer, setOpenLoginDrawer] = useState(false);
@@ -89,9 +90,9 @@ function Header({ mode, handleThemeChange }) {
             >
               <Box component={NavLink} to="/">
                 <img
-                  src="https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg"
+                  src={logo}
                   style={logoStyle}
-                  alt="logo of sitemark"
+                  alt="AutoPartsShop logo"
                 />
               </Box>
               <Box sx={{ display: { xs: "none", md: "flex" } }}>

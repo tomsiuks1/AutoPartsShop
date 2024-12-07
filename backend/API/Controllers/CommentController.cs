@@ -28,7 +28,8 @@ namespace API.Controllers
                     Id = c.Id,
                     Content = c.Content,
                     CreatedAt = c.CreatedAt,
-                    DisplayName = _context.Users.FirstOrDefault(u => u.Id == c.UserId).DisplayName
+                    DisplayName = _context.Users.FirstOrDefault(u => u.Id == c.UserId).DisplayName,
+                    UserId = c.UserId,
                 })
                 .ToListAsync();
 
@@ -65,6 +66,7 @@ namespace API.Controllers
                 ProductId = productId,
                 Content = comment.Content,
                 Product = product,
+                DisplayName = user.DisplayName,
                 UserId = user.Id,
             };
 

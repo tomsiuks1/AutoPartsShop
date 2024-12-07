@@ -38,7 +38,7 @@ export default function ProductForm({ product, cancelEdit }) {
     try {
       let response;
       if (product) {
-        response = await agent.Admin.updateProduct(data);
+        response = await agent.Admin.updateProduct(product.id, data);
       } else {
         response = await agent.Admin.createProduct(data);
       }
@@ -72,7 +72,7 @@ export default function ProductForm({ product, cancelEdit }) {
               items={types}
               control={control}
               name="type"
-              label="Type"
+              label="Category"
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -91,6 +91,33 @@ export default function ProductForm({ product, cancelEdit }) {
               label="Quantity in Stock"
             />
           </Grid>
+          <Grid item xs={12} sm={6}>
+            <AppTextInput
+              control={control}
+              name="pictureUrl"
+              label="Picture Url"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              {watch('pictureUrl') ? (
+                <img
+                  src={watch('pictureUrl')}
+                  alt="Uploaded Preview"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '400px',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                  }}
+                />
+              ) : (
+                <Typography variant="caption" color="textSecondary">
+                  No image to display. Enter a valid URL.
+                </Typography>
+              )}
+            </div>
+          </Grid>
           <Grid item xs={12}>
             <AppTextInput
               multiline={true}
@@ -100,28 +127,6 @@ export default function ProductForm({ product, cancelEdit }) {
               label="Description"
             />
           </Grid>
-          {/* <Grid item xs={12}>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <AppDropZone control={control} name="file" />
-              {watchFile ? (
-                <img
-                  src={watchFile.preview}
-                  alt="preview"
-                  style={{ maxHeight: 200 }}
-                />
-              ) : (
-                <img
-                  src={product?.pictureUrl}
-                  alt={product?.name}
-                  style={{ maxHeight: 200 }}
-                />
-              )}
-            </Box>
-          </Grid> */}
         </Grid>
         <Box display="flex" justifyContent="space-between" sx={{ mt: 3 }}>
           <Button onClick={cancelEdit} variant="contained" color="inherit">
@@ -130,10 +135,11 @@ export default function ProductForm({ product, cancelEdit }) {
           <LoadingButton
             loading={isSubmitting}
             type="submit"
+            onClick={handleSubmit(handleSubmitData)}
             variant="contained"
-            color="success"
+            color="primary"
           >
-            Submit
+            Save
           </LoadingButton>
         </Box>
       </form>
@@ -143,7 +149,7 @@ export default function ProductForm({ product, cancelEdit }) {
 
 ProductForm.propTypes = {
   product: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.string,
     name: PropTypes.string.isRequired,
     brand: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,

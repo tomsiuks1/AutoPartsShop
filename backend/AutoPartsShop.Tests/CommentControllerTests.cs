@@ -103,8 +103,6 @@ namespace AutoPartsShop.Tests
             var commentId = await _context.Comments.Where(c => c.ProductId == productId).Select(c => c.Id).FirstAsync();
             var updateComment = new UpdateCommentDto
             {
-                Id = commentId,
-                ProductId = productId,
                 Content = "Updated content"
             };
 

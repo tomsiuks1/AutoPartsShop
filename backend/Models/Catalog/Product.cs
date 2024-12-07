@@ -14,7 +14,7 @@ namespace Models.Catalog
         public string Brand { get; set; }
         public int QuantityInStock { get; set; }
         public string PublicId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public Guid CategoryId { get; set; }
         [JsonIgnore]
         public Category Category { get; set; }

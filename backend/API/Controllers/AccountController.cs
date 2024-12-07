@@ -9,6 +9,7 @@ using System.Security.Claims;
 using Models.Baskets;
 using Persistence;
 using Models.Extentions;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {
@@ -96,6 +97,12 @@ namespace API.Controllers
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
             var userBasket = await RetrieveBasket(User.Identity.Name);
 
+            if(userBasket != null)
+            {
+                var cookieOptions = new CookieOptions { IsEssential = true, Expires = DateTime.Now.AddDays(30) };
+                Response.Cookies.Append("buyerId", userBasket.BuyerId, cookieOptions);
+            }
+
             return await CreateUserObject(user, userBasket?.MapBasketToDto());
         }
 
@@ -104,6 +111,7 @@ namespace API.Controllers
             return new UserDto
             {
                 DisplayName = user.UserName,
+                Id = user.Id,
                 Image = null,
                 UserName = user.UserName,
                 Basket = basket

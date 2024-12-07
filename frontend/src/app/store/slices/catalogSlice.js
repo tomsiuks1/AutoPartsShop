@@ -27,6 +27,7 @@ export const fetchCatalogItemsAsync = createAsyncThunk(
     const params = getAxiosParams(thunkAPI.getState().catalog.catalogParams);
     try {
       const response = await agent.Catalog.getCatalog(params);
+
       thunkAPI.dispatch(setMetaData(response.metaData));
       return response.items;
     } catch (error) {

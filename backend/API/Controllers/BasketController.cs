@@ -26,12 +26,12 @@ namespace API.Controllers
             return basket.MapBasketToDto();
         }
 
-        [HttpDelete("{productId}")]
+        [HttpDelete]
         public async Task<ActionResult> RemoveBasketItem(Guid productId, int quantity = 1)
         {
             var basket = await RetrieveBasket(GetBuyerId());
 
-            if (basket == null) return BadRequest();
+            if (basket == null) return NotFound();
 
             basket.RemoveItem(productId, quantity);
 
@@ -40,7 +40,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        [HttpPut("{productId}")]
+        [HttpPut]
         public async Task<ActionResult<BasketDto>> UpdateBasket(Guid productId, int quantity = 1)
         {
             var basket = await RetrieveBasket(GetBuyerId());
