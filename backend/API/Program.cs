@@ -30,10 +30,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+if(app.Environment.IsProduction())
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+if(app.Environment.IsProduction())
+{
+  app.MapFallbackToController("Index", "Fallback");
+}
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

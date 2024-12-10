@@ -18,7 +18,7 @@ namespace API.Extentions
             });
             services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddScoped<IEmailService>(provider => new EmailService("smtp.gmail.com", 587, "tomsiuks4@gmail.com", "wtmp ufdk atrl doxl"));

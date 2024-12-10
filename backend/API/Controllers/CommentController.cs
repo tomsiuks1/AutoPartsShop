@@ -51,7 +51,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Comment>> CreateComment(Guid productId, CreateCommentDto comment)
+        public async Task<ActionResult<Comment>> Create(Guid productId, CreateCommentDto comment)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
             var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == productId);

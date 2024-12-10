@@ -89,7 +89,7 @@ namespace AutoPartsShop.Tests
                 Content = "Amazing!"
             };
 
-            var result = await _controller.CreateComment(productId, newComment);
+            var result = await _controller.Create(productId, newComment);
 
             var actionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
             var returnValue = Assert.IsType<Comment>(actionResult.Value);
