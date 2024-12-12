@@ -1,5 +1,7 @@
 ## Auto dalių parduotuvė
 
+Internetinę automobilių dalių parduotuvę AutoPartsShop, kuri leidžia vartotojams peržiūrėti, filtruoti ir pirkti automobilių dalis internetu. Sistema taip pat suteikia administratoriui galimybę valdyti inventorių, pridėti naujas prekes, redaguoti esamas ir tvarkyti užsakymus.
+
 ### Funkciniai reikalavimai
 
 Neregistruotas sistemos naudotojas gales:
