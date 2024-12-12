@@ -32,7 +32,7 @@ export default function OrdersPage() {
   if (selectedOrderNumber !== null && orders)
     return (
       <OrderDetails
-        order={orders.find((o) => o.id === selectedOrderNumber)}
+        order={orders.find((o) => o?.id === selectedOrderNumber)}
         setSelectedOrder={setSelectedOrderNumber}
       />
     );

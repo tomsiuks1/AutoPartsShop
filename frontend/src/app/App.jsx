@@ -15,7 +15,6 @@ import { fetchCurrentUser } from "./store/slices/accountSlice";
 import { fetchBasketAsync } from "./store/slices/basketSlice";
 import "react-toastify/dist/ReactToastify.css";
 import ErrorBoundary from "./ErrorBoundry";
-import Footer from "./layout/Footer";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -55,8 +54,7 @@ function App() {
         />
         <Container>
           <Outlet />
-        </Container>
-        <Footer />
+        </Container> 
       </ErrorBoundary>
       <LoadingIndicator active={isLoading} />
       <ToastContainer theme={mode} autoClose={messageDuration} />

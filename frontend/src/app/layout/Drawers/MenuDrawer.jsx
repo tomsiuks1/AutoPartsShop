@@ -6,11 +6,14 @@ import {
   Divider,
   Box,
   MenuItem,
+  IconButton,
+  Badge,
 } from "@mui/material";
 import ToggleColorMode from "../ToggleColorMode";
 import { MIDDLE_LINKS } from "../../../constants";
+import { ShoppingCart } from "@mui/icons-material";
 import { useAppSelector } from "../../store/configureStore";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 
 function MenuDrawer({
   mode,
@@ -20,6 +23,9 @@ function MenuDrawer({
   toggleLoginDrawer,
 }) {
   const { user } = useAppSelector((state) => state.account);
+  const { basket } = useAppSelector((state) => state.basket);
+  const itemCount = basket?.items?.reduce((sum, item) => sum + item.quantity, 0);
+
   const handleLoginDrawerToggle = () => {
     onClose();
     toggleLoginDrawer();
@@ -38,26 +44,55 @@ function MenuDrawer({
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "end",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
             flexGrow: 1,
           }}
         >
+              {user &&
+                <IconButton
+                  component={Link}
+                  to="/basket"
+                  size="large"
+                  edge="start"
+                  color="primary"
+                  sx={{ mr: 2 }}
+                >
+                  <Badge badgeContent={itemCount} color="secondary">
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+              }
           <ToggleColorMode mode={mode} toggleColorMode={handleThemeChange} />
         </Box>
-        {MIDDLE_LINKS.map(({ title, path }) => (
+        <Divider />
+        <MenuItem
+          key={"/about"}
+          component={NavLink}
+          to={"/about"}
+        >
+          <Typography variant="body2" color="text.primary">
+            About
+          </Typography>
+        </MenuItem>
+        {user && user.roles?.includes("Admin") && (
           <MenuItem
-            key={path}
+            key={"/inventory"}
             component={NavLink}
-            to={path}
-            onClick={onClose}
-            sx={{ py: "6px", px: "12px" }}
+            to={"/inventory"}
           >
             <Typography variant="body2" color="text.primary">
-              {title}
+              Inventory
             </Typography>
-          </MenuItem>
-        ))}
+          </MenuItem>)}
+          {user && user.roles?.length > 0 && MIDDLE_LINKS.map(({ title, path }) => (
+            <MenuItem key={path} component={NavLink} to={path}>
+              <Typography variant="body2" color="text.primary">
+                {title}
+              </Typography>
+            </MenuItem>
+          ))}
         {!user && (
           <>
             <Divider />

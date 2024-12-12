@@ -22,7 +22,9 @@ export const router = createBrowserRouter([
         children: [
           { path: "catalog/:id", element: <CatalogItemDetails /> },
           { path: "/checkout", element: <CheckoutWrapper /> },
+          { path: "/catalog", element: <CatalogPage /> },
           { path: "/orders", element: <OrdersPage /> },
+          { path: "/basket", element: <BasketPage /> },
         ],
       },
       {
@@ -30,8 +32,6 @@ export const router = createBrowserRouter([
         children: [{ path: "/inventory", element: <Inventory /> }],
       },
       { path: "/about", element: <AboutPage /> },
-      { path: "/catalog", element: <CatalogPage /> },
-      { path: "/basket", element: <BasketPage /> },
       { path: "/not-found", element: <NotFound /> },
       { path: "*", element: <Navigate replace to="/not-found" /> },
     ],

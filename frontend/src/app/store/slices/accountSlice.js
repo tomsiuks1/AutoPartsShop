@@ -64,6 +64,10 @@ export const accountSlice = createSlice({
     },
     setUser: (state, action) => {
       const token = getAuthenticationToken();
+      
+      if (!token) {
+        return;
+      }
 
       const claims = JSON.parse(atob(token.split(".")[1]));
       const roles =
@@ -79,7 +83,6 @@ export const accountSlice = createSlice({
       .addCase(fetchCurrentUser.rejected, (state) => {
         state.user = null;
         localStorage.removeItem("autoPartsShopAuthorizationToken");
-        // toast.error("Session expired - please login again");
         router.navigate("/");
       })
       .addMatcher(
@@ -89,6 +92,11 @@ export const accountSlice = createSlice({
           action.type === fetchCurrentUser.fulfilled.type,
         (state, action) => {
           const token = getAuthenticationToken();
+
+          if (!token) {
+            return;
+          }
+
           const claims = JSON.parse(atob(token.split(".")[1]));
           
           const roles =

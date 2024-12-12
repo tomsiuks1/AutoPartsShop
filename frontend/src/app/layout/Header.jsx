@@ -96,6 +96,15 @@ function Header({ mode, handleThemeChange }) {
                 />
               </Box>
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                  <MenuItem
+                    key={"/about"}
+                    component={NavLink}
+                    to={"/about"}
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      About
+                    </Typography>
+                  </MenuItem>
                 {user && user.roles?.includes("Admin") && (
                   <MenuItem
                     key={"/inventory"}
@@ -107,7 +116,7 @@ function Header({ mode, handleThemeChange }) {
                     </Typography>
                   </MenuItem>
                 )}
-                {MIDDLE_LINKS.map(({ title, path }) => (
+                {user && user.roles?.length > 0 && MIDDLE_LINKS.map(({ title, path }) => (
                   <MenuItem key={path} component={NavLink} to={path}>
                     <Typography variant="body2" color="text.primary">
                       {title}
@@ -127,18 +136,21 @@ function Header({ mode, handleThemeChange }) {
                 mode={mode}
                 toggleColorMode={handleThemeChange}
               />
-              <IconButton
-                component={Link}
-                to="/basket"
-                size="large"
-                edge="start"
-                color="primary"
-                sx={{ mr: 2 }}
-              >
-                <Badge badgeContent={itemCount} color="secondary">
-                  <ShoppingCart />
-                </Badge>
-              </IconButton>
+              {user &&
+                <IconButton
+                  component={Link}
+                  to="/basket"
+                  size="large"
+                  edge="start"
+                  color="primary"
+                  sx={{ mr: 2 }}
+                >
+                  <Badge badgeContent={itemCount} color="secondary">
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+              }
+
               {!user ? (
                 <Box sx={{ display: { sm: "" } }}>
                   <Button

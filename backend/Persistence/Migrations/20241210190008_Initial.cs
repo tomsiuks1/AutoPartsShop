@@ -336,9 +336,9 @@ namespace Persistence.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("6a2f97bf-75f3-4428-b99b-2cfaf1084f65"), null, "User", "User" },
-                    { new Guid("e28e4ea6-fdd4-41f4-a81e-d57e475b134e"), null, "Member", "MEMBER" },
-                    { new Guid("f1abfea4-a71f-49ce-8a37-e1fe799a9897"), null, "Admin", "ADMIN" }
+                    { new Guid("4409f72a-3916-4de0-8958-7355f59cd06f"), null, "Admin", "ADMIN" },
+                    { new Guid("62e2d299-1412-4649-9e7f-95e8b481b422"), null, "User", "User" },
+                    { new Guid("9b7a3666-199d-406c-bbaa-e7dea785bca3"), null, "Member", "MEMBER" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -8,8 +8,8 @@ export default function CatalogList({ catalogItems }) {
 
   return (
     <Grid container spacing={3}> 
-      {catalogItems && catalogItems.map((catalogItem) => (
-        <Grid item xs={12} md={3} key={catalogItem.id}>
+      {catalogItems && catalogItems?.map((catalogItem) => (
+        <Grid item xs={10} md={4} key={catalogItem.id}>
           {!catalogItemsLoaded ? (
             <CatalogCardSkeleton />
           ) : (

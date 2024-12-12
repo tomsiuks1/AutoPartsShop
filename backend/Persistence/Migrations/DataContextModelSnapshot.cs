@@ -340,19 +340,19 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e28e4ea6-fdd4-41f4-a81e-d57e475b134e"),
+                            Id = new Guid("9b7a3666-199d-406c-bbaa-e7dea785bca3"),
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = new Guid("f1abfea4-a71f-49ce-8a37-e1fe799a9897"),
+                            Id = new Guid("4409f72a-3916-4de0-8958-7355f59cd06f"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("6a2f97bf-75f3-4428-b99b-2cfaf1084f65"),
+                            Id = new Guid("62e2d299-1412-4649-9e7f-95e8b481b422"),
                             Name = "User",
                             NormalizedName = "User"
                         });
